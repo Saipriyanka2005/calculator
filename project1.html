@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CalcPro - Advanced Calculator</title>
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #dbeafe, #eef2ff);
+    color: #172033;
+}
+
+/* NAVBAR */
+
+nav {
+    height: 75px;
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(15px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 8%;
+
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+    color: #4f46e5;
+}
+
+.nav-buttons button {
+    border: none;
+    background: transparent;
+    margin-left: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #334155;
+}
+
+.nav-buttons button:hover {
+    color: #4f46e5;
+}
+
+/* PAGE SYSTEM */
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+/* CALCULATOR PAGE */
+
+.calculator-page {
+    min-height: calc(100vh - 75px);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+}
+
+.calculator {
+    width: 400px;
+
+    background: rgba(255,255,255,0.9);
+
+    padding: 28px;
+
+    border-radius: 25px;
+
+    box-shadow:
+        0 25px 60px rgba(30,41,59,0.18);
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.title h1 {
+    font-size: 28px;
+}
+
+.title p {
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* DISPLAY */
+
+.display {
+    background: #0f172a;
+
+    padding: 15px;
+
+    border-radius: 15px;
+
+    margin-bottom: 20px;
+}
+
+#screen {
+    width: 100%;
+    height: 65px;
+
+    border: none;
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    text-align: right;
+
+    font-size: 32px;
+}
+
+/* BUTTONS */
+
+.buttons {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 11px;
+}
+
+.buttons button {
+    height: 58px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: #f1f5f9;
+
+    font-size: 19px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.08);
+}
+
+.buttons button:hover {
+    transform: translateY(-3px);
+    background: #e2e8f0;
+}
+
+.buttons button:active {
+    transform: scale(0.94);
+}
+
+.operator {
+    background: #dbeafe !important;
+    color: #3730a3;
+}
+
+.clear {
+    background: #fee2e2 !important;
+    color: #b91c1c;
+}
+
+.equal {
+    background: #bbf7d0 !important;
+    color: #166534;
+}
+
+.zero {
+    grid-column: span 2;
+}
+
+/* HISTORY PAGE */
+
+.history-page {
+    min-height: calc(100vh - 75px);
+
+    padding: 50px 8%;
+}
+
+.history-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.history-header h1 {
+    font-size: 38px;
+}
+
+.history-header p {
+    color: #64748b;
+    margin-top: 8px;
+}
+
+.history-box {
+    max-width: 850px;
+
+    margin: auto;
+
+    background: rgba(255,255,255,0.9);
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,0.12);
+}
+
+.history-item {
+    padding: 18px;
+
+    margin-bottom: 12px;
+
+    background: #f8fafc;
+
+    border-left: 5px solid #4f46e5;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+}
+
+.expression {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.time {
+    color: #94a3b8;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+.result {
+    color: #15803d;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.history-actions {
+    display: flex;
+
+    justify-content: space-between;
+
+    margin-top: 20px;
+}
+
+.history-actions button {
+    padding: 12px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+}
+
+.back {
+    background: #4f46e5;
+    color: white;
+}
+
+.delete-history {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.empty {
+    text-align: center;
+    padding: 50px;
+    color: #64748b;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:600px) {
+
+    nav {
+        padding: 0 5%;
+    }
+
+    .nav-buttons button {
+        margin-left: 8px;
+        font-size: 13px;
+    }
+
+    .calculator {
+        width: 100%;
+    }
+
+    .history-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- NAVIGATION -->
+
+<nav>
+
+    <div class="logo">
+        🧮 CalcPro
+    </div>
+
+    <div class="nav-buttons">
+
+        <button onclick="showPage('calculator')">
+            Calculator
+        </button>
+
+        <button onclick="showPage('history')">
+            History
+        </button>
+
+    </div>
+
+</nav>
+
+
+<!-- ================= CALCULATOR PAGE ================= -->
+
+<section id="calculator" class="page active">
+
+<div class="calculator-page">
+
+<div class="calculator">
+
+<div class="title">
+
+<h1>Advanced Calculator</h1>
+
+<p>Fast • Simple • Powerful</p>
+
+</div>
+
+
+<div class="display">
+
+<input
+type="text"
+id="screen"
+readonly>
+
+</div>
+
+
+<div class="buttons">
+
+<button
+class="clear"
+onclick="clearScreen()">
+AC
+</button>
+
+<button onclick="deleteLast()">
+⌫
+</button>
+
+<button
+class="operator"
+onclick="add('%')">
+%
+</button>
+
+<button
+class="operator"
+onclick="add('/')">
+÷
+</button>
+
+
+<button onclick="add('7')">
+7
+</button>
+
+<button onclick="add('8')">
+8
+</button>
+
+<button onclick="add('9')">
+9
+</button>
+
+<button
+class="operator"
+onclick="add('*')">
+×
+</button>
+
+
+<button onclick="add('4')">
+4
+</button>
+
+<button onclick="add('5')">
+5
+</button>
+
+<button onclick="add('6')">
+6
+</button>
+
+<button
+class="operator"
+onclick="add('-')">
+−
+</button>
+
+
+<button onclick="add('1')">
+1
+</button>
+
+<button onclick="add('2')">
+2
+</button>
+
+<button onclick="add('3')">
+3
+</button>
+
+<button
+class="operator"
+onclick="add('+')">
++
+</button>
+
+
+<button
+class="zero"
+onclick="add('0')">
+0
+</button>
+
+<button onclick="add('.')">
+.
+</button>
+
+<button
+class="equal"
+onclick="calculate()">
+=
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= HISTORY PAGE ================= -->
+
+<section id="history" class="page">
+
+<div class="history-page">
+
+<div class="history-header">
+
+<h1>📊 Calculation History</h1>
+
+<p>
+All your previous calculations
+</p>
+
+</div>
+
+
+<div class="history-box">
+
+<div id="historyList"></div>
+
+
+<div class="history-actions">
+
+<button
+class="back"
+onclick="showPage('calculator')">
+
+← Calculator
+
+</button>
+
+
+<button
+class="delete-history"
+onclick="clearHistory()">
+
+🗑 Clear History
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<script>
+
+/* PAGE SWITCHING */
+
+function showPage(pageName) {
+
+    document
+    .querySelectorAll(".page")
+    .forEach(page => {
+
+        page.classList.remove("active");
+
+    });
+
+    document
+    .getElementById(pageName)
+    .classList.add("active");
+
+    if(pageName === "history") {
+
+        displayHistory();
+
+    }
+
+}
+
+
+/* CALCULATOR */
+
+const screen =
+document.getElementById("screen");
+
+
+function add(value) {
+
+    screen.value += value;
+
+}
+
+
+function clearScreen() {
+
+    screen.value = "";
+
+}
+
+
+function deleteLast() {
+
+    screen.value =
+    screen.value.slice(0,-1);
+
+}
+
+
+function calculate() {
+
+    if(screen.value === "") return;
+
+    try {
+
+        let expression =
+        screen.value;
+
+        let result =
+        eval(expression);
+
+        screen.value =
+        result;
+
+
+        let history =
+        JSON.parse(
+            localStorage.getItem(
+                "calculatorHistory"
+            )
+        ) || [];
+
+
+        history.push({
+
+            expression: expression,
+
+            result: result,
+
+            time:
+            new Date().toLocaleString()
+
+        });
+
+
+        localStorage.setItem(
+
+            "calculatorHistory",
+
+            JSON.stringify(history)
+
+        );
+
+    }
+
+    catch {
+
+        screen.value = "Error";
+
+    }
+
+}
+
+
+/* HISTORY */
+
+function displayHistory() {
+
+    let container =
+    document.getElementById(
+        "historyList"
+    );
+
+
+    let history =
+    JSON.parse(
+        localStorage.getItem(
+            "calculatorHistory"
+        )
+    ) || [];
+
+
+    container.innerHTML = "";
+
+
+    if(history.length === 0) {
+
+        container.innerHTML = `
+
+        <div class="empty">
+
+            📭 No calculations yet.
+
+            <br><br>
+
+            Go to Calculator and
+            perform some calculations.
+
+        </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    history
+    .slice()
+    .reverse()
+    .forEach(item => {
+
+        let div =
+        document.createElement("div");
+
+        div.className =
+        "history-item";
+
+
+        div.innerHTML = `
+
+        <div>
+
+            <div class="expression">
+
+                ${item.expression}
+
+            </div>
+
+            <div class="time">
+
+                ${item.time}
+
+            </div>
+
+        </div>
+
+        <div class="result">
+
+            = ${item.result}
+
+        </div>
+
+        `;
+
+
+        container.appendChild(div);
+
+    });
+
+}
+
+
+function clearHistory() {
+
+    if(confirm(
+        "Clear all calculation history?"
+    )) {
+
+        localStorage.removeItem(
+            "calculatorHistory"
+        );
+
+        displayHistory();
+
+    }
+
+}
+
+
+/* KEYBOARD */
+
+document.addEventListener(
+"keydown",
+function(event) {
+
+    if(
+        /[0-9+\-*/.%]/.test(event.key)
+    ) {
+
+        add(event.key);
+
+    }
+
+    else if(event.key === "Enter") {
+
+        calculate();
+
+    }
+
+    else if(event.key === "Backspace") {
+
+        deleteLast();
+
+    }
+
+    else if(event.key === "Escape") {
+
+        clearScreen();
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
